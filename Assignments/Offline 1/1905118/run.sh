@@ -1,8 +1,8 @@
 clear
 
-rm build/*
+rm main.out
 rm out*.txt
 
-g++ -std=c++17 -fsanitize=address src/* -o build/main
+g++ -std=c++17 -fsanitize=address src/* -o main.out
 
-./build/main
+./main.out
