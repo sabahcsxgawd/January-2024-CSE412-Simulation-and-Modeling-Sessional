@@ -6,6 +6,21 @@
 
 Simulation::Simulation()
 {
+    // open outFile2
+    this->outFile2.open("out2.txt");
+
+    if (!this->outFile2)
+    {
+        std::cout << "Error opening output file2\n";
+        exit(1);
+    }
+
+    // Specify current event number to be 0
+    this->curr_event_num = 0;
+
+    // Specify next event customer to be 0
+    this->next_event_cust = 0;
+
     // Specify the number of events for the timing function
     this->num_events = 2;
 
@@ -23,7 +38,7 @@ Simulation::Simulation()
     this->area_num_in_q = 0.0;
     this->area_server_status = 0.0;
     
-    this->time_next_event.resize(this->num_events);
+    this->next_event_data.resize(this->num_events);
 
 }
 
@@ -40,24 +55,25 @@ void Simulation::set_service_gen(int seed)
 void Simulation::init_event_list(void)
 {
     // Initialize the event list with the arrival event
-    this->time_next_event[0] = this->sim_time + this->arrival_gen->get();
-    this->time_next_event[1] = INF;
+    this->next_event_data[0] = std::make_pair(this->sim_time + this->arrival_gen->get(), 1);
+    this->next_event_data[1] = std::make_pair(INF, -1);
 }
 
 void Simulation::timing(void)
 {
     int i;
-    double min_time_next_event = 1.0e+29;
+    double min_next_event_data = 1.0e+29;
 
     this->next_event_type = -1;
 
     // Determine the event type of the next event to occur
     for (i = 0; i < this->num_events; ++i)
     {
-        if (this->time_next_event[i] < min_time_next_event)
+        if (this->next_event_data[i].first < min_next_event_data)
         {
-            min_time_next_event = this->time_next_event[i];
+            min_next_event_data = this->next_event_data[i].first;
             this->next_event_type = i;
+            this->next_event_cust = this->next_event_data[i].second;
         }
     }
 
@@ -70,14 +86,17 @@ void Simulation::timing(void)
     }
 
     // The event list is not empty, so advance the simulation clock
-    this->sim_time = min_time_next_event;
+    this->sim_time = min_next_event_data;
 }
 
 void Simulation::arrive(void) {
     double delay;
 
+    // print next event : arrival
+    this->outFile2 << ++this->curr_event_num << ". Next event: Customer " << this->next_event_cust << " Arrival\n";
+
     // Schedule next arrival
-    this->time_next_event[0] = (this->sim_time + this->arrival_gen->get());
+    this->next_event_data[0] = std::make_pair(this->sim_time + this->arrival_gen->get(), this->next_event_cust + 1);
 
     // Check to see if server is busy
     if (this->server_status == BUSY)
@@ -98,8 +117,11 @@ void Simulation::arrive(void) {
         ++this->num_custs_delayed;
         this->server_status = BUSY;
 
+        // print number of customers delayed
+        this->outFile2 << "\n---------No. of customers delayed: " << this->num_custs_delayed << "--------\n\n";
+
         // Schedule a departure (service completion)
-        this->time_next_event[1] = (this->sim_time + this->service_gen->get());
+        this->next_event_data[1] = std::make_pair(this->sim_time + this->service_gen->get(), this->next_event_cust);
     }
 }
 
@@ -107,12 +129,15 @@ void Simulation::depart(void) {
     int i;
     double delay;
 
+    // print next event: departure    
+    this->outFile2 << ++this->curr_event_num << ". Next event: Customer " << this->next_event_cust << " Departure\n";
+
     // Check to see if queue is empty
     if (this->num_in_q == 0)
     {
         // The queue is empty, so make the server idle and eliminate the departure (service completion) event from consideration
         this->server_status = IDLE;
-        this->time_next_event[1] = (INFINITY);
+        this->next_event_data[1] = std::make_pair(INFINITY, -1);
     }
     else
     {
@@ -125,7 +150,10 @@ void Simulation::depart(void) {
 
         // Increment the number of customers delayed, and schedule the departure
         ++this->num_custs_delayed;
-        this->time_next_event[1] = (this->sim_time + this->service_gen->get());
+        this->next_event_data[1] = std::make_pair(this->sim_time + this->service_gen->get(), this->next_event_cust + 1);
+
+        // print number of customers delayed
+        this->outFile2 << "\n---------No. of customers delayed: " << this->num_custs_delayed << "--------\n\n";
 
         // Move each customer in queue (if any) up one place
         this->time_arrival.erase(this->time_arrival.begin());
@@ -145,10 +173,6 @@ void Simulation::update_time_avg_stats(void) {
     // Update area under server-busy indicator function
     this->area_server_status += (this->server_status * time_since_last_event);    
 }
-
-#include <iomanip> // Include for std::setw
-
-#include <iomanip> // Include for std::setw
 
 void Simulation::report(void) {
     // Compute and write estimates of desired measures of performance
@@ -171,7 +195,7 @@ void Simulation::run(void) {
 
     if (!this->outFile1)
     {
-        std::cout << "Error opening output file\n";
+        std::cout << "Error opening output file1\n";
         exit(1);
     }
 
@@ -221,8 +245,9 @@ void Simulation::run(void) {
     // Invoke the report generator and end the simulation
     this->report();
 
-    // close output file
+    // close output files
     this->outFile1.close();
+    this->outFile2.close();
 
     delete this->arrival_gen;
     delete this->service_gen;
