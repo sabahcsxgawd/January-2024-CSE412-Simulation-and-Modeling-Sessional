@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "include/RandGen.h"
+#include "RandGen.h"
 
 class Simulation
 {
@@ -26,7 +26,7 @@ private:
     std::ifstream inFile;
     std::ofstream outFile;
 
-    RandGen arrival_gen, service_gen;
+    RandGen *arrival_gen, *service_gen;
 
     void init_event_list(void);
     void timing(void);

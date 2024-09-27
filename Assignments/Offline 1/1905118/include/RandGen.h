@@ -6,6 +6,7 @@
 
 class RandGen {
 public:
+    RandGen() = delete;
     RandGen(int seed, double mean);
     double get();
 

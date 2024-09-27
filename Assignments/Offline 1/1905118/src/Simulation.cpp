@@ -1,5 +1,5 @@
-#include "include/Simulation.h"
-#include "include/defs.h"
+#include "../include/Simulation.h"
+#include "../include/defs.h"
 
 Simulation::Simulation()
 {
@@ -26,19 +26,19 @@ Simulation::Simulation()
 
 void Simulation::set_arrival_gen(int seed)
 {
-    this->arrival_gen = RandGen(seed, this->mean_interarrival);
+    this->arrival_gen = new RandGen(seed, this->mean_interarrival);
 }
 
 void Simulation::set_service_gen(int seed)
 {
-    this->service_gen = RandGen(seed, this->mean_service);
+    this->service_gen = new RandGen(seed, this->mean_service);
 }
 
 void Simulation::init_event_list(void)
 {
     // Initialize the event list with the arrival event
-    this->time_next_event[0] = (this->sim_time + this->arrival_gen.get());
-    this->time_next_event[1] = (INFINITY);
+    this->time_next_event[0] = this->sim_time + this->arrival_gen->get();
+    this->time_next_event[1] = INF;
 }
 
 void Simulation::timing(void)
@@ -74,7 +74,7 @@ void Simulation::arrive(void) {
     double delay;
 
     // Schedule next arrival
-    this->time_next_event[0] = (this->sim_time + this->arrival_gen.get());
+    this->time_next_event[0] = (this->sim_time + this->arrival_gen->get());
 
     // Check to see if server is busy
     if (this->server_status == BUSY)
@@ -96,7 +96,7 @@ void Simulation::arrive(void) {
         this->server_status = BUSY;
 
         // Schedule a departure (service completion)
-        this->time_next_event[1] = (this->sim_time + this->service_gen.get());
+        this->time_next_event[1] = (this->sim_time + this->service_gen->get());
     }
 }
 
@@ -122,7 +122,7 @@ void Simulation::depart(void) {
 
         // Increment the number of customers delayed, and schedule the departure
         ++this->num_custs_delayed;
-        this->time_next_event[1] = (this->sim_time + this->service_gen.get());
+        this->time_next_event[1] = (this->sim_time + this->service_gen->get());
 
         // Move each customer in queue (if any) up one place
         this->time_arrival.erase(this->time_arrival.begin());
@@ -180,9 +180,8 @@ void Simulation::run(void) {
     this->outFile << "Mean service time: " << this->mean_service << '\n';
     this->outFile << "Number of customers: " << this->num_delays_required << '\n';
 
-    // close input file and output file
+    // close input file
     this->inFile.close();
-    this->outFile.close();
 
     // Initialize the simulation
     this->init_event_list();
@@ -212,16 +211,12 @@ void Simulation::run(void) {
     }
 
     // Invoke the report generator and end the simulation
-    this->outFile.open("out2.txt");
-
-    if (!this->outFile)
-    {
-        std::cout << "Error opening output file\n";
-        exit(1);
-    }
-
     this->report();
 
+    // close output file
     this->outFile.close();
+
+    delete this->arrival_gen;
+    delete this->service_gen;
 
 }
