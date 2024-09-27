@@ -1,6 +1,9 @@
 #include "../include/Simulation.h"
 #include "../include/defs.h"
 
+#include <iostream>
+#include <iomanip>
+
 Simulation::Simulation()
 {
     // Specify the number of events for the timing function
@@ -143,17 +146,22 @@ void Simulation::update_time_avg_stats(void) {
     this->area_server_status += (this->server_status * time_since_last_event);    
 }
 
+#include <iomanip> // Include for std::setw
+
+#include <iomanip> // Include for std::setw
+
 void Simulation::report(void) {
     // Compute and write estimates of desired measures of performance
-    this->outFile << "\n\nAverage delay in queue: " << (this->total_of_delays / this->num_custs_delayed) << '\n';
-    this->outFile << "Average number in queue: " << (this->area_num_in_q / this->sim_time) << '\n';
-    this->outFile << "Server utilization: " << (this->area_server_status / this->sim_time) << '\n';
-    this->outFile << "Time simulation ended: " << this->sim_time << '\n';
+    this->outFile1 << "\n\n"
+                   << std::left << std::setw(30) << "Average delay in queue:" << std::right << std::setw(10) << (this->total_of_delays / this->num_custs_delayed) << " minutes\n"
+                   << std::left << std::setw(30) << "Average number in queue:" << std::right << std::setw(10) << (this->area_num_in_q / this->sim_time) << '\n'
+                   << std::left << std::setw(30) << "Server utilization:" << std::right << std::setw(10) << (this->area_server_status / this->sim_time) << '\n'
+                   << std::left << std::setw(30) << "Time simulation ended:" << std::right << std::setw(10) << this->sim_time << " minutes\n";
 }
 
 void Simulation::run(void) {
     this->inFile.open("in.txt");
-    this->outFile.open("out1.txt");
+    this->outFile1.open("out1.txt");
 
     if (!this->inFile)
     {
@@ -161,7 +169,7 @@ void Simulation::run(void) {
         exit(1);
     }
 
-    if (!this->outFile)
+    if (!this->outFile1)
     {
         std::cout << "Error opening output file\n";
         exit(1);
@@ -175,10 +183,10 @@ void Simulation::run(void) {
     this->set_service_gen(24);
 
     // Write report heading and input parameters
-    this->outFile << "Single-server queueing system\n\n";
-    this->outFile << "Mean interarrival time: " << this->mean_interarrival << '\n';
-    this->outFile << "Mean service time: " << this->mean_service << '\n';
-    this->outFile << "Number of customers: " << this->num_delays_required << '\n';
+    this->outFile1 << "Single-server queueing system\n\n";
+    this->outFile1 << std::left << std::setw(30) << "Mean interarrival time:" << std::right << std::setw(10) << this->mean_interarrival << " minutes\n";
+    this->outFile1 << std::left << std::setw(30) << "Mean service time:" << std::right << std::setw(10) << this->mean_service << " minutes\n";
+    this->outFile1 << std::left << std::setw(30) << "Number of customers:" << std::right << std::setw(10) << this->num_delays_required << '\n';
 
     // close input file
     this->inFile.close();
@@ -214,7 +222,7 @@ void Simulation::run(void) {
     this->report();
 
     // close output file
-    this->outFile.close();
+    this->outFile1.close();
 
     delete this->arrival_gen;
     delete this->service_gen;

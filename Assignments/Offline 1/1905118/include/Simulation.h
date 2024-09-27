@@ -1,7 +1,6 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include "RandGen.h"
@@ -24,7 +23,7 @@ private:
     std::vector<double> time_arrival, time_next_event;
 
     std::ifstream inFile;
-    std::ofstream outFile;
+    std::ofstream outFile1, outFile2;
 
     RandGen *arrival_gen, *service_gen;
 
