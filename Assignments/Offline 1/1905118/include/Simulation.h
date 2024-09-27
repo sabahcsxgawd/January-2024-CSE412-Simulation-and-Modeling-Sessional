@@ -10,11 +10,8 @@ class Simulation
 {
 
 public:
-    Simulation();    
-    void set_arrival_gen(int seed);
-    void set_service_gen(int seed);      
+    Simulation();
     void run(void);
-    ~Simulation();
 
 private:
     int next_event_type, num_custs_delayed, num_delays_required, num_events,
@@ -28,7 +25,7 @@ private:
     std::ifstream inFile;
     std::ofstream outFile1, outFile2;
 
-    RandGen *arrival_gen, *service_gen;
+    RandGen rand_gen;
 
     void init_event_list(void);
     void timing(void);

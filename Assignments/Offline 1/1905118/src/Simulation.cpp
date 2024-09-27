@@ -42,20 +42,10 @@ Simulation::Simulation()
 
 }
 
-void Simulation::set_arrival_gen(int seed)
-{
-    this->arrival_gen = new RandGen(seed, this->mean_interarrival);
-}
-
-void Simulation::set_service_gen(int seed)
-{
-    this->service_gen = new RandGen(seed, this->mean_service);
-}
-
 void Simulation::init_event_list(void)
 {
     // Initialize the event list with the arrival event
-    this->next_event_data[0] = std::make_pair(this->sim_time + this->arrival_gen->get(), 1);
+    this->next_event_data[0] = std::make_pair(this->sim_time + this->rand_gen.get(this->mean_interarrival), 1);
     this->next_event_data[1] = std::make_pair(INF, -1);
 }
 
@@ -96,7 +86,7 @@ void Simulation::arrive(void) {
     this->outFile2 << ++this->curr_event_num << ". Next event: Customer " << this->next_event_cust << " Arrival\n";
 
     // Schedule next arrival
-    this->next_event_data[0] = std::make_pair(this->sim_time + this->arrival_gen->get(), this->next_event_cust + 1);
+    this->next_event_data[0] = std::make_pair(this->sim_time + this->rand_gen.get(this->mean_interarrival), this->next_event_cust + 1);
 
     // Check to see if server is busy
     if (this->server_status == BUSY)
@@ -121,7 +111,7 @@ void Simulation::arrive(void) {
         this->outFile2 << "\n---------No. of customers delayed: " << this->num_custs_delayed << "--------\n\n";
 
         // Schedule a departure (service completion)
-        this->next_event_data[1] = std::make_pair(this->sim_time + this->service_gen->get(), this->next_event_cust);
+        this->next_event_data[1] = std::make_pair(this->sim_time + this->rand_gen.get(this->mean_service), this->next_event_cust);
     }
 }
 
@@ -137,7 +127,7 @@ void Simulation::depart(void) {
     {
         // The queue is empty, so make the server idle and eliminate the departure (service completion) event from consideration
         this->server_status = IDLE;
-        this->next_event_data[1] = std::make_pair(INFINITY, -1);
+        this->next_event_data[1] = std::make_pair(INF, -1);
     }
     else
     {
@@ -150,7 +140,7 @@ void Simulation::depart(void) {
 
         // Increment the number of customers delayed, and schedule the departure
         ++this->num_custs_delayed;
-        this->next_event_data[1] = std::make_pair(this->sim_time + this->service_gen->get(), this->next_event_cust + 1);
+        this->next_event_data[1] = std::make_pair(this->sim_time + this->rand_gen.get(this->mean_service), this->next_event_cust + 1);
 
         // print number of customers delayed
         this->outFile2 << "\n---------No. of customers delayed: " << this->num_custs_delayed << "--------\n\n";
@@ -177,10 +167,10 @@ void Simulation::update_time_avg_stats(void) {
 void Simulation::report(void) {
     // Compute and write estimates of desired measures of performance
     this->outFile1 << "\n\n"
-                   << std::left << std::setw(30) << "Average delay in queue:" << std::right << std::setw(10) << (this->total_of_delays / this->num_custs_delayed) << " minutes\n"
-                   << std::left << std::setw(30) << "Average number in queue:" << std::right << std::setw(10) << (this->area_num_in_q / this->sim_time) << '\n'
-                   << std::left << std::setw(30) << "Server utilization:" << std::right << std::setw(10) << (this->area_server_status / this->sim_time) << '\n'
-                   << std::left << std::setw(30) << "Time simulation ended:" << std::right << std::setw(10) << this->sim_time << " minutes\n";
+                   << std::left << std::setw(30) << "Average delay in queue:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << (this->total_of_delays / this->num_custs_delayed) << " minutes\n"
+                   << std::left << std::setw(30) << "Average number in queue:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << (this->area_num_in_q / this->sim_time) << '\n'
+                   << std::left << std::setw(30) << "Server utilization:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << (this->area_server_status / this->sim_time) << '\n'
+                   << std::left << std::setw(30) << "Time simulation ended:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << this->sim_time << " minutes\n";
 }
 
 void Simulation::run(void) {
@@ -200,16 +190,12 @@ void Simulation::run(void) {
     }
 
     // Read input parameters
-    this->inFile >> this->mean_interarrival >> this->mean_service >> this->num_delays_required;
-
-    // arrival_gen and service_gen are initialized in the constructor
-    this->set_arrival_gen(42);
-    this->set_service_gen(24);
+    this->inFile >> this->mean_interarrival >> this->mean_service >> this->num_delays_required;    
 
     // Write report heading and input parameters
     this->outFile1 << "Single-server queueing system\n\n";
-    this->outFile1 << std::left << std::setw(30) << "Mean interarrival time:" << std::right << std::setw(10) << this->mean_interarrival << " minutes\n";
-    this->outFile1 << std::left << std::setw(30) << "Mean service time:" << std::right << std::setw(10) << this->mean_service << " minutes\n";
+    this->outFile1 << std::left << std::setw(30) << "Mean interarrival time:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << this->mean_interarrival << " minutes\n";
+    this->outFile1 << std::left << std::setw(30) << "Mean service time:" << std::right << std::setw(10) << std::fixed << std::setprecision(3) << this->mean_service << " minutes\n";
     this->outFile1 << std::left << std::setw(30) << "Number of customers:" << std::right << std::setw(10) << this->num_delays_required << '\n';
 
     // close input file
@@ -249,10 +235,4 @@ void Simulation::run(void) {
     this->outFile1.close();
     this->outFile2.close();
 
-}
-
-Simulation::~Simulation()
-{
-    delete this->arrival_gen;
-    delete this->service_gen;
 }

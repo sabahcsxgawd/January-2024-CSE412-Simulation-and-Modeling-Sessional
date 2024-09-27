@@ -1,4 +1,12 @@
 #include "../include/RandGen.h"
+#include "../include/lcgrand.h"
 
-RandGen::RandGen(int seed, double mean) : gen(seed), dist(0, 1), mean(mean) {}
-double RandGen::get() { return -mean * log(dist(gen)); }
+#include <cmath>
+
+RandGen::RandGen() {
+    this->mean = 0.0;
+}
+
+double RandGen::get(double mean) {
+    return -mean * log(lcgrand(1));
+}
