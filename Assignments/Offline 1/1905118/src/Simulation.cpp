@@ -249,7 +249,10 @@ void Simulation::run(void) {
     this->outFile1.close();
     this->outFile2.close();
 
+}
+
+Simulation::~Simulation()
+{
     delete this->arrival_gen;
     delete this->service_gen;
-
 }

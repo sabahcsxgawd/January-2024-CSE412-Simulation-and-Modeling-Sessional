@@ -14,6 +14,7 @@ public:
     void set_arrival_gen(int seed);
     void set_service_gen(int seed);      
     void run(void);
+    ~Simulation();
 
 private:
     int next_event_type, num_custs_delayed, num_delays_required, num_events,
