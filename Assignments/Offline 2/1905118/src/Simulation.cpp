@@ -96,14 +96,11 @@ void Simulation::report(void)
     double avgShortageCost = this->areaUnderShortageCostCurve / this->numberOfMonths;
     double avgOrderingCost = this->totalOrderingCost / this->numberOfMonths;
 
-    // TODO: need to print them in outFile
-    this->outFile << "Smalls: " << this->smalls << '\n';
-    this->outFile << "Bigs: " << this->bigs << '\n';
-    this->outFile << "Average holding cost: " << avgHoldCost << '\n';
-    this->outFile << "Average shortage cost: " << avgShortageCost << '\n';
-    this->outFile << "Average ordering cost: " << avgOrderingCost << '\n';
-    this->outFile << "Total cost: " << avgHoldCost + avgShortageCost + avgOrderingCost << '\n';
-    this->outFile << "----------------------\n\n";    
+    this->outFile << '(' << this->smalls << ", " << this->bigs << ')';
+    this->outFile << std::setw(20) << avgHoldCost + avgShortageCost + avgOrderingCost;
+    this->outFile << std::setw(20) << avgOrderingCost;
+    this->outFile << std::setw(20) << avgHoldCost;
+    this->outFile << std::setw(20) << avgShortageCost << "\n\n";    
 }
 
 void Simulation::updateTimeAvgStats(void)
@@ -153,6 +150,33 @@ void Simulation::run()
         this->inFile >> this->demandCumulativeProbabilities[i];
     }
 
+    this->outFile << std::fixed << std::setprecision(2);
+
+    this->outFile << "------Single-Product Inventory System------\n\n";
+    this->outFile << "Initial inventory level: " << this->initialInventoryLevel << " items\n\n";
+    this->outFile << "Number of demand sizes: " << this->numberOfDemandValues << "\n\n";
+    this->outFile << "Distribution function of demand sizes: ";
+    for(int i = 0; i < this->numberOfDemandValues; i++) {
+        this->outFile << this->demandCumulativeProbabilities[i] << " ";
+    }
+    this->outFile << "\n\n";
+    this->outFile << "Mean inter-demand time: " << this->meanInterDemandTime << " months\n\n";
+    this->outFile << "Delivery lag range: " << this->minArrivalLag << " to " << this->maxArrivalLag << " months\n\n";
+    this->outFile << "Length of simulation: " << this->numberOfMonths << " months\n\n";
+    this->outFile << "Costs:\n";
+    this->outFile << "K = " << this->setupCost << " \n";
+    this->outFile << "i = " << this->incrementalCost << " \n";
+    this->outFile << "h = " << this->holdingCost << " \n";
+    this->outFile << "pi = " << this->shortageCost << " \n\n";
+
+    this->outFile << "Number of policies: " << this->numberOfPolicies << "\n\n";
+
+    this->outFile << "Policies: \n";
+
+    this->outFile << "--------------------------------------------------------------------------------------------------\n";
+    this->outFile << " Policy        Avg_total_cost     Avg_ordering_cost      Avg_holding_cost     Avg_shortage_cost\n";
+    this->outFile << "--------------------------------------------------------------------------------------------------\n\n";
+
     for(int i = 0; i < this->numberOfPolicies; i++) {
         this->inFile >> this->smalls >> this->bigs;
 
@@ -179,6 +203,8 @@ void Simulation::run()
             }
         } while(this->nextEventType != 2);
     }
+
+        this->outFile << "--------------------------------------------------------------------------------------------------";
 
     // close the files
     this->inFile.close();

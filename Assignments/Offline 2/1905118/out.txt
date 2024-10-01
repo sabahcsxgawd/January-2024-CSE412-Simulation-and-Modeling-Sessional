@@ -1,72 +1,46 @@
-Smalls: 20
-Bigs: 40
-Average holding cost: 9.24708
-Average shortage cost: 3.62047
-Average ordering cost: 99.2583
-Total cost: 112.126
-----------------------
+------Single-Product Inventory System------
 
-Smalls: 20
-Bigs: 60
-Average holding cost: 17.3933
-Average shortage cost: 2.96645
-Average ordering cost: 90.5167
-Total cost: 110.876
-----------------------
+Initial inventory level: 60 items
 
-Smalls: 20
-Bigs: 80
-Average holding cost: 26.2445
-Average shortage cost: 2.05218
-Average ordering cost: 87.3583
-Total cost: 115.655
-----------------------
+Number of demand sizes: 4
 
-Smalls: 20
-Bigs: 100
-Average holding cost: 36.0037
-Average shortage cost: 1.58995
-Average ordering cost: 81.3667
-Total cost: 118.96
-----------------------
+Distribution function of demand sizes: 0.17 0.50 0.83 1.00 
 
-Smalls: 40
-Bigs: 60
-Average holding cost: 25.9922
-Average shortage cost: 0.390638
-Average ordering cost: 98.425
-Total cost: 124.808
-----------------------
+Mean inter-demand time: 0.10 months
 
-Smalls: 40
-Bigs: 80
-Average holding cost: 35.9159
-Average shortage cost: 0.228863
-Average ordering cost: 88.4
-Total cost: 124.545
-----------------------
+Delivery lag range: 0.50 to 1.00 months
 
-Smalls: 40
-Bigs: 100
-Average holding cost: 46.4205
-Average shortage cost: 0.259131
-Average ordering cost: 84.625
-Total cost: 131.305
-----------------------
+Length of simulation: 120 months
 
-Smalls: 60
-Bigs: 80
-Average holding cost: 44.0204
-Average shortage cost: 0.0625111
-Average ordering cost: 105.692
-Total cost: 149.775
-----------------------
+Costs:
+K = 32.00 
+i = 3.00 
+h = 1.00 
+pi = 5.00 
 
-Smalls: 60
-Bigs: 100
-Average holding cost: 53.9087
-Average shortage cost: 0.0480404
-Average ordering cost: 89.05
-Total cost: 143.007
-----------------------
+Number of policies: 9
 
+Policies: 
+--------------------------------------------------------------------------------------------------
+ Policy        Avg_total_cost     Avg_ordering_cost      Avg_holding_cost     Avg_shortage_cost
+--------------------------------------------------------------------------------------------------
+
+(20, 40)              112.13               99.26                9.25                3.62
+
+(20, 60)              110.88               90.52               17.39                2.97
+
+(20, 80)              115.65               87.36               26.24                2.05
+
+(20, 100)              118.96               81.37               36.00                1.59
+
+(40, 60)              124.81               98.42               25.99                0.39
+
+(40, 80)              124.54               88.40               35.92                0.23
+
+(40, 100)              131.30               84.62               46.42                0.26
+
+(60, 80)              149.77              105.69               44.02                0.06
+
+(60, 100)              143.01               89.05               53.91                0.05
+
+--------------------------------------------------------------------------------------------------
