@@ -1,0 +1,72 @@
+Smalls: 20
+Bigs: 40
+Average holding cost: 9.24708
+Average shortage cost: 3.62047
+Average ordering cost: 99.2583
+Total cost: 112.126
+----------------------
+
+Smalls: 20
+Bigs: 60
+Average holding cost: 17.3933
+Average shortage cost: 2.96645
+Average ordering cost: 90.5167
+Total cost: 110.876
+----------------------
+
+Smalls: 20
+Bigs: 80
+Average holding cost: 26.2445
+Average shortage cost: 2.05218
+Average ordering cost: 87.3583
+Total cost: 115.655
+----------------------
+
+Smalls: 20
+Bigs: 100
+Average holding cost: 36.0037
+Average shortage cost: 1.58995
+Average ordering cost: 81.3667
+Total cost: 118.96
+----------------------
+
+Smalls: 40
+Bigs: 60
+Average holding cost: 25.9922
+Average shortage cost: 0.390638
+Average ordering cost: 98.425
+Total cost: 124.808
+----------------------
+
+Smalls: 40
+Bigs: 80
+Average holding cost: 35.9159
+Average shortage cost: 0.228863
+Average ordering cost: 88.4
+Total cost: 124.545
+----------------------
+
+Smalls: 40
+Bigs: 100
+Average holding cost: 46.4205
+Average shortage cost: 0.259131
+Average ordering cost: 84.625
+Total cost: 131.305
+----------------------
+
+Smalls: 60
+Bigs: 80
+Average holding cost: 44.0204
+Average shortage cost: 0.0625111
+Average ordering cost: 105.692
+Total cost: 149.775
+----------------------
+
+Smalls: 60
+Bigs: 100
+Average holding cost: 53.9087
+Average shortage cost: 0.0480404
+Average ordering cost: 89.05
+Total cost: 143.007
+----------------------
+
