@@ -92,11 +92,11 @@ void Simulation::evaluate(void)
 void Simulation::report(void)
 {
     // Compute and write estimates of desired measures of performance
-    double avgHoldCost = this->areaUnderHoldCostCurve / this->numberOfMonths;
-    double avgShortageCost = this->areaUnderShortageCostCurve / this->numberOfMonths;
+    double avgHoldCost = this->areaUnderHoldCostCurve * this->holdingCost / this->numberOfMonths;
+    double avgShortageCost = this->areaUnderShortageCostCurve * this->shortageCost / this->numberOfMonths;
     double avgOrderingCost = this->totalOrderingCost / this->numberOfMonths;
 
-    this->outFile << '(' << this->smalls << ", " << this->bigs << ')';
+    this->outFile << '(' << std::setw(2) << this->smalls << "," << std::setw(3) << this->bigs << ')';
     this->outFile << std::setw(20) << avgHoldCost + avgShortageCost + avgOrderingCost;
     this->outFile << std::setw(20) << avgOrderingCost;
     this->outFile << std::setw(20) << avgHoldCost;
@@ -164,14 +164,14 @@ void Simulation::run()
     this->outFile << "Delivery lag range: " << this->minArrivalLag << " to " << this->maxArrivalLag << " months\n\n";
     this->outFile << "Length of simulation: " << this->numberOfMonths << " months\n\n";
     this->outFile << "Costs:\n";
-    this->outFile << "K = " << this->setupCost << " \n";
-    this->outFile << "i = " << this->incrementalCost << " \n";
-    this->outFile << "h = " << this->holdingCost << " \n";
-    this->outFile << "pi = " << this->shortageCost << " \n\n";
+    this->outFile << "K = " << this->setupCost << "\n";
+    this->outFile << "i = " << this->incrementalCost << "\n";
+    this->outFile << "h = " << this->holdingCost << "\n";
+    this->outFile << "pi = " << this->shortageCost << "\n\n";
 
     this->outFile << "Number of policies: " << this->numberOfPolicies << "\n\n";
 
-    this->outFile << "Policies: \n";
+    this->outFile << "Policies:\n";
 
     this->outFile << "--------------------------------------------------------------------------------------------------\n";
     this->outFile << " Policy        Avg_total_cost     Avg_ordering_cost      Avg_holding_cost     Avg_shortage_cost\n";
